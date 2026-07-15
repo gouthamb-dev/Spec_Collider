@@ -22,11 +22,13 @@ import type { AgentOrchestratorConfig } from './agents/orchestrator.ts';
 import type { ModerationAction } from './types/ui.ts';
 import type { Mitigation } from './types/domain.ts';
 import type { MCPData } from './types/mcp.ts';
+import { RedTeamStreamParser } from './agents/red-team-parser.ts';
+import { ArchitectStreamParser } from './agents/architect-parser.ts';
 
 // === App Configuration ===
 
 const AGENT_CONFIG: AgentOrchestratorConfig = {
-  endpointUrl: import.meta.env.VITE_API_ENDPOINT ?? 'http://localhost:3000/converse',
+  endpointUrl: import.meta.env.VITE_API_ENDPOINT || 'https://h7faczcrhh.execute-api.us-east-1.amazonaws.com/converse',
   redTeamSystemPrompt: DEFAULT_RED_TEAM_PROMPT,
   architectSystemPrompt: DEFAULT_ARCHITECT_PROMPT,
   timeoutMs: 30_000,
@@ -137,6 +139,72 @@ function App() {
       // 2. Build MCP context for agents
       const mcpContext = await gatherMCPContext();
 
+      // 2.5. Generate spec draft from the idea
+      try {
+        const specDraftPrompt = `You are a software architect. Given a feature idea, generate an initial spec draft.
+
+You MUST output your response as a JSON object with these exact fields:
+- "overview": string (2-3 paragraph summary of what the system does and why)
+- "proposedArchitecture": string (high-level architecture description with components)
+- "dataModel": string (key data entities, their relationships, and storage approach)
+- "apiSurface": string (main API endpoints or interfaces the system exposes)
+- "assumptions": string (key assumptions and constraints)
+
+Output ONLY the JSON object. No explanatory text before or after.`;
+
+        const specDraftContext = {
+          systemPrompt: specDraftPrompt,
+          specDraft: store.getState().session.specDraft,
+          activityHistory: store.getState().session.activityFeed,
+          mcpContext,
+        };
+
+        let specDraftRaw = '';
+        const specDraftOrchestrator = orchestratorRef.current;
+        for await (const chunk of specDraftOrchestrator.invokeRedTeam(specDraftContext)) {
+          if (!chunk.done) {
+            specDraftRaw += chunk.content;
+          }
+        }
+
+        // Parse the spec draft JSON
+        const jsonMatch = specDraftRaw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try {
+            const draft = JSON.parse(jsonMatch[0]) as {
+              overview?: string;
+              proposedArchitecture?: string;
+              dataModel?: string;
+              apiSurface?: string;
+              assumptions?: string;
+            };
+            const currentDraft = store.getState().session.specDraft;
+            store.getState().updateSpecDraft({
+              ...currentDraft,
+              overview: draft.overview ?? currentDraft.overview,
+              proposedArchitecture: draft.proposedArchitecture ?? currentDraft.proposedArchitecture,
+              dataModel: draft.dataModel ?? currentDraft.dataModel,
+              apiSurface: draft.apiSurface ?? currentDraft.apiSurface,
+              assumptions: draft.assumptions ?? currentDraft.assumptions,
+              lastModified: Date.now(),
+              version: currentDraft.version + 1,
+            });
+          } catch {
+            // If JSON parse fails, use raw text as overview
+            const currentDraft = store.getState().session.specDraft;
+            store.getState().updateSpecDraft({
+              ...currentDraft,
+              overview: specDraftRaw,
+              lastModified: Date.now(),
+              version: currentDraft.version + 1,
+            });
+          }
+        }
+      } catch (err) {
+        // Non-fatal: spec draft generation failed, continue with empty draft
+        console.warn('[App] Spec draft generation failed:', err);
+      }
+
       // 3. Invoke Red Team
       const redTeamContext = buildAgentContext(
         'red_team_agent',
@@ -147,13 +215,38 @@ function App() {
       );
 
       try {
+        const redTeamParser = new RedTeamStreamParser(false);
         for await (const chunk of orchestratorRef.current.invokeRedTeam(redTeamContext)) {
           if (!chunk.done) {
+            redTeamParser.addChunk(chunk.content);
             store.getState().dispatchEvent({
               type: 'stream_chunk',
               payload: { source: 'red_team_agent', content: chunk.content },
             });
           }
+        }
+        // Mark the red team entry as stream complete
+        const state = store.getState();
+        const feed = state.session.activityFeed;
+        const redEntry = feed.find(
+          (e) => e.contributor === 'red_team_agent' && !e.streamComplete
+        );
+        if (redEntry) {
+          const updatedFeed = feed.map((e) =>
+            e.id === redEntry.id ? { ...e, streamComplete: true } : e
+          );
+          store.setState({
+            session: { ...state.session, activityFeed: updatedFeed },
+          });
+        }
+
+        // Parse structured risks from the accumulated output
+        const risks = redTeamParser.finalize();
+        for (const risk of risks) {
+          store.getState().dispatchEvent({
+            type: 'risk_identified',
+            payload: { risk },
+          });
         }
       } catch (err) {
         // Feed-level error for agent failure
@@ -177,13 +270,39 @@ function App() {
       );
 
       try {
+        const architectParser = new ArchitectStreamParser();
         for await (const chunk of orchestratorRef.current.invokeArchitect(architectContext)) {
           if (!chunk.done) {
+            architectParser.addChunk(chunk.content);
             store.getState().dispatchEvent({
               type: 'stream_chunk',
               payload: { source: 'architect_agent', content: chunk.content },
             });
           }
+        }
+        // Mark the architect entry as stream complete
+        const archState = store.getState();
+        const archFeed = archState.session.activityFeed;
+        const archEntry = archFeed.find(
+          (e) => e.contributor === 'architect_agent' && !e.streamComplete
+        );
+        if (archEntry) {
+          const updatedFeed = archFeed.map((e) =>
+            e.id === archEntry.id ? { ...e, streamComplete: true } : e
+          );
+          store.setState({
+            session: { ...archState.session, activityFeed: updatedFeed },
+          });
+        }
+
+        // Parse structured mitigations from the accumulated output
+        const mitigations = architectParser.finalize();
+        mitigationsRef.current = mitigations;
+        for (const mitigation of mitigations) {
+          store.getState().dispatchEvent({
+            type: 'mitigation_proposed',
+            payload: { mitigation },
+          });
         }
       } catch (err) {
         // Feed-level error for agent failure

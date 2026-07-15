@@ -1,3 +1,4 @@
+import Markdown from 'react-markdown';
 import type { VersionedArtifact } from '../types/domain.ts';
 
 export interface ArtifactsPanelProps {
@@ -125,12 +126,10 @@ export function ArtifactsPanel({
                 )}
               </div>
               <div
-                className="max-h-96 overflow-y-auto rounded-md bg-surface-container-high p-3"
+                className="max-h-96 overflow-y-auto rounded-md bg-surface-container-high p-3 prose prose-sm max-w-none"
                 data-testid={`artifact-content-${artifact.artifactId}`}
               >
-                <pre className="whitespace-pre-wrap break-words font-mono text-sm text-surface-on">
-                  {displayVersion?.content ?? ''}
-                </pre>
+                <Markdown>{displayVersion?.content ?? ''}</Markdown>
               </div>
             </article>
           );

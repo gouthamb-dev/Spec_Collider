@@ -62,12 +62,12 @@ export class BedrockStack extends cdk.Stack {
     });
 
     // --- IAM: Least-privilege Bedrock permission ---
+    // Cross-region inference profiles route to models in multiple regions,
+    // so we need to allow all regions for foundation-model resources.
     this.lambdaFn.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ['bedrock:InvokeModelWithResponseStream'],
-        resources: [
-          `arn:aws:bedrock:${this.region}::foundation-model/${MODEL_ID}`,
-        ],
+        resources: ['*'],
       })
     );
 

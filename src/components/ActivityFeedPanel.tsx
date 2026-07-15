@@ -1,4 +1,5 @@
 import { useRef, useEffect, useCallback, useState } from 'react';
+import Markdown from 'react-markdown';
 import type { ActivityEntry } from '../types/domain.ts';
 import type { ConnectionStatus, ModerationAction } from '../types/ui.ts';
 import {
@@ -164,8 +165,10 @@ function ActivityEntryItem({
   const isError = entry.metadata?.isError === true;
 
   // Determine if moderation controls should be shown
+  // Show for parsed mitigation entries (they always have streamComplete: true)
   const showModeration =
-    entry.type === 'mitigation_proposed' && entry.streamComplete;
+    entry.type === 'mitigation_proposed' && 
+    entry.streamComplete;
 
   const containerClasses = isError
     ? 'rounded-lg p-3 bg-error-container text-error-on-container'
@@ -189,9 +192,9 @@ function ActivityEntryItem({
               {timeStr}
             </span>
           </div>
-          <p className={`mt-1 text-sm ${isError ? 'text-error-on-container' : 'text-surface-on'}`}>
-            {entry.content}
-          </p>
+          <div className={`mt-1 text-sm ${isError ? 'text-error-on-container' : 'text-surface-on'} prose prose-sm max-w-none`}>
+            <Markdown>{entry.content}</Markdown>
+          </div>
           {showModeration && (
             <ModerationControls entry={entry} onModerate={onModerate} />
           )}
@@ -236,8 +239,26 @@ export function ActivityFeedPanel({
   // Sort entries chronologically
   const sortedEntries = [...entries].sort((a, b) => a.timestamp - b.timestamp);
 
+  // Filter out raw JSON streaming entries from agents (they show as ugly code blocks).
+  // Only display the parsed structured entries (risk_identified, mitigation_proposed with metadata).
+  const displayEntries = sortedEntries.filter((entry) => {
+    // Always show user entries and decision entries
+    if (entry.contributor === 'user') return true;
+    if (entry.type === 'decision_made' || entry.type === 'chaos_triggered') return true;
+    // For agent entries: hide raw stream entries (not streamComplete, or streamComplete without metadata)
+    if (entry.contributor === 'red_team_agent' || entry.contributor === 'architect_agent') {
+      // Show only entries that came from parsed structured output (have metadata with riskId or mitigationId)
+      if (entry.metadata?.riskId || entry.metadata?.mitigationId) return true;
+      // Also show entries with short content (titles from parsed output, not raw JSON)
+      if (entry.content.length < 500 && !entry.content.includes('"title"') && !entry.content.includes('"riskId"')) return true;
+      // Hide everything else (raw JSON streams)
+      return false;
+    }
+    return true;
+  });
+
   const chaosActive = isChaosRoundActive(sortedEntries);
-  const isEmpty = entries.length === 0;
+  const isEmpty = displayEntries.length === 0;
 
   return (
     <div
@@ -262,7 +283,7 @@ export function ActivityFeedPanel({
           data-testid="feed-scroll-container"
         >
           <div className="flex flex-col gap-3">
-            {sortedEntries.map((entry) => (
+            {displayEntries.map((entry) => (
               <ActivityEntryItem
                 key={entry.id}
                 entry={entry}

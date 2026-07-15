@@ -46,15 +46,18 @@ export async function handler(
       modelId: MODEL_ID,
       messages: bedrockMessages,
       system: systemPrompt,
+      inferenceConfig: {
+        maxTokens: 2048,
+      },
     });
 
     const response = await client.send(command);
     const chunks: string[] = [];
 
     if (response.stream) {
-      for await (const event of response.stream) {
-        if (event.contentBlockDelta?.delta?.text) {
-          const text = event.contentBlockDelta.delta.text;
+      for await (const streamEvent of response.stream) {
+        if (streamEvent.contentBlockDelta?.delta?.text) {
+          const text = streamEvent.contentBlockDelta.delta.text;
           chunks.push(formatSSEChunk(text, false));
         }
       }

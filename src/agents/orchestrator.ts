@@ -50,7 +50,29 @@ You MUST produce outputs that exclusively contain Risks — flaws, failure modes
 
 You MUST NOT produce Mitigations, solutions, or design alternatives. That is the Architect's role.
 
-Structure each Risk with: title, category (scalability | security | reliability | edge_case | missing_assumption), severity (critical | high | medium | low), description, affected_components, and evidence.`;
+You MUST output your response as a JSON array. Each element must have these exact fields:
+- "title": string (risk title)
+- "category": one of "scalability", "security", "reliability", "edge_case", "missing_assumption"
+- "severity": one of "critical", "high", "medium", "low"
+- "description": string (detailed explanation)
+- "affected_components": array of strings (component names affected)
+- "evidence": string (evidence or reasoning)
+
+Example output format:
+\`\`\`json
+[
+  {
+    "title": "SQL Injection in user input",
+    "category": "security",
+    "severity": "critical",
+    "description": "User input is concatenated directly into SQL queries without parameterization.",
+    "affected_components": ["UserService", "DatabaseLayer"],
+    "evidence": "The API surface shows raw string interpolation in query construction."
+  }
+]
+\`\`\`
+
+Output ONLY the JSON array. Do not include explanatory text before or after the JSON.`;
 
 export const DEFAULT_ARCHITECT_PROMPT = `You are an Architect Agent. Your role is to propose mitigations, trade-offs, and safer design alternatives in response to identified risks.
 
@@ -58,7 +80,29 @@ You MUST produce outputs that exclusively contain Mitigations — solutions, tra
 
 You MUST NOT produce Risks, attacks, or failure-mode analyses. That is the Red Team's role.
 
-Structure each Mitigation with: riskId, riskTitle, responseType (fix | trade_off | accepted_risk), description, and technologies (specific named technologies or patterns).`;
+You MUST output your response as a JSON array. Each element must have these exact fields:
+- "riskId": string (ID of the risk being addressed, e.g. "1", "2")
+- "riskTitle": string (title of the risk being mitigated)
+- "responseType": one of "fix", "trade_off", "accepted_risk"
+- "description": string (detailed mitigation description)
+- "technologies": array of strings (specific named technologies or patterns to use)
+- "tradeOffs": array of strings (optional, trade-offs of this approach)
+
+Example output format:
+\`\`\`json
+[
+  {
+    "riskId": "1",
+    "riskTitle": "SQL Injection in user input",
+    "responseType": "fix",
+    "description": "Use parameterized queries with prepared statements for all database access.",
+    "technologies": ["Prepared Statements", "pg-promise parameterized queries"],
+    "tradeOffs": ["Slightly more verbose query code"]
+  }
+]
+\`\`\`
+
+Output ONLY the JSON array. Do not include explanatory text before or after the JSON.`;
 
 // === Helper: Build user message from context (never includes system prompt content) ===
 
@@ -190,75 +234,68 @@ export class AgentOrchestrator implements IAgentOrchestrator {
       }
 
       if (!response.body) {
-        throw new Error('Response body is null');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          // Emit final done chunk
-          yield {
-            content: '',
-            done: true,
-            source: role,
-            timestamp: Date.now(),
-          };
-          break;
-        }
-
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        // Keep the last potentially incomplete line in the buffer
-        buffer = lines.pop() ?? '';
-
+        // Fallback: read as text and parse SSE lines
+        const text = await response.text();
+        const lines = text.split('\n');
         for (const line of lines) {
           const trimmed = line.trim();
           if (!trimmed || !trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6);
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data) as { content?: string; done?: boolean };
+            if (parsed.done) break;
+            if (parsed.content) {
+              yield { content: parsed.content, done: false, source: role, timestamp: Date.now() };
+            }
+          } catch { /* skip */ }
+        }
+        yield { content: '', done: true, source: role, timestamp: Date.now() };
+        return;
+      }
 
+      // Try reading as text first since API Gateway returns full body (not a real stream)
+      let responseText: string | null = null;
+      try {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        const readChunks: string[] = [];
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          readChunks.push(decoder.decode(value, { stream: true }));
+        }
+        responseText = readChunks.join('');
+      } catch {
+        responseText = null;
+      }
+
+      if (responseText) {
+        const lines = responseText.split('\n');
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ')) continue;
           const data = trimmed.slice(6);
           if (data === '[DONE]') {
-            yield {
-              content: '',
-              done: true,
-              source: role,
-              timestamp: Date.now(),
-            };
+            yield { content: '', done: true, source: role, timestamp: Date.now() };
             return;
           }
-
           try {
-            const parsed = JSON.parse(data) as {
-              content?: string;
-              done?: boolean;
-            };
+            const parsed = JSON.parse(data) as { content?: string; done?: boolean };
             if (parsed.done) {
-              yield {
-                content: '',
-                done: true,
-                source: role,
-                timestamp: Date.now(),
-              };
+              yield { content: '', done: true, source: role, timestamp: Date.now() };
               return;
             }
-            const content = parsed.content;
-            if (content) {
-              yield {
-                content,
-                done: false,
-                source: role,
-                timestamp: Date.now(),
-              };
+            if (parsed.content) {
+              yield { content: parsed.content, done: false, source: role, timestamp: Date.now() };
             }
-          } catch {
-            // Skip malformed JSON chunks
-          }
+          } catch { /* skip malformed */ }
         }
+        yield { content: '', done: true, source: role, timestamp: Date.now() };
+        return;
       }
+
+      throw new Error('Failed to read response body');
     } catch (error: unknown) {
       if (
         (error instanceof Error && error.name === 'AbortError') ||

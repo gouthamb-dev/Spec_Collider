@@ -185,11 +185,13 @@ function routeEvent(
     }
 
     case 'risk_identified': {
+      const risk = event.payload.risk;
+      const content = `**${risk.title}**\n\n${risk.description}\n\n**Severity:** ${risk.severity} | **Category:** ${risk.category}\n\n**Affected:** ${risk.affectedComponents.join(', ')}`;
       const entry = createActivityEntry(
         'risk_identified',
         'red_team_agent',
-        event.payload.risk.title,
-        { riskId: event.payload.risk.id, severity: event.payload.risk.severity, category: event.payload.risk.category }
+        content,
+        { riskId: risk.id, severity: risk.severity, category: risk.category }
       );
       return {
         session: {
@@ -201,11 +203,13 @@ function routeEvent(
     }
 
     case 'mitigation_proposed': {
+      const mitigation = event.payload.mitigation;
+      const content = `**For risk:** ${mitigation.riskTitle}\n\n${mitigation.description}\n\n**Type:** ${mitigation.responseType} | **Technologies:** ${mitigation.technologies.join(', ')}`;
       const entry = createActivityEntry(
         'mitigation_proposed',
         'architect_agent',
-        event.payload.mitigation.description,
-        { mitigationId: event.payload.mitigation.id, riskId: event.payload.mitigation.riskId }
+        content,
+        { mitigationId: mitigation.id, riskId: mitigation.riskId }
       );
       return {
         session: {
@@ -331,8 +335,42 @@ function routeEvent(
     }
 
     case 'stream_chunk': {
-      // Stream chunks don't mutate session state directly - they're handled by UI
-      return {};
+      // Accumulate stream chunks into an activity feed entry for the source agent.
+      // Find an existing incomplete (streaming) entry for this source, or create one.
+      const source = event.payload.source;
+      const content = event.payload.content;
+      const existingEntryIndex = session.activityFeed.findIndex(
+        (e: ActivityEntry) => e.contributor === source && !e.streamComplete
+      );
+
+      let updatedFeed: ActivityEntry[];
+      if (existingEntryIndex >= 0) {
+        // Append content to existing streaming entry
+        updatedFeed = [...session.activityFeed];
+        const existing = updatedFeed[existingEntryIndex];
+        updatedFeed[existingEntryIndex] = {
+          ...existing,
+          content: existing.content + content,
+        };
+      } else {
+        // Create a new streaming entry
+        const entry = createActivityEntry(
+          source === 'red_team_agent' ? 'risk_identified' : 'mitigation_proposed',
+          source,
+          content,
+          {}
+        );
+        entry.streamComplete = false;
+        updatedFeed = [...session.activityFeed, entry];
+      }
+
+      return {
+        session: {
+          ...session,
+          updatedAt: Date.now(),
+          activityFeed: updatedFeed,
+        },
+      };
     }
 
     case 'error': {
@@ -356,7 +394,7 @@ export function createWorkspaceStore(sessionManager?: ISessionManager) {
     subscribeWithSelector((set, get) => ({
       // Initial state
       session: initialSession,
-      connectionStatus: 'disconnected' as ConnectionStatus,
+      connectionStatus: 'connected' as ConnectionStatus,
       isGenerating: false,
       error: null,
       eventHistory: [],
