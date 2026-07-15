@@ -1,0 +1,410 @@
+{
+  "/BedrockStack": [
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/BedrockStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-singleton",
+      "data": true
+    },
+    {
+      "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+      "data": 2
+    }
+  ],
+  "/BedrockStack/DistributionUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DistributionUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:103:5)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:106:5)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/SiteBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucket397A1860"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Bucket2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:23:23)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/BedrockStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/Distribution/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Distribution830FAC52"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Distribution2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:30:25)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/BedrockProxy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BedrockProxy9E476D6D"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new NodejsFunction in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:53:21)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/HttpApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HttpApiF5A9A8A7"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new HttpApi2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:75:21)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new BucketDeployment2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:95:5)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)"
+      ]
+    }
+  ],
+  "/BedrockStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/CDKMetadata/Condition": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadataAvailable"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib, node internals...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/SiteBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucketPolicy3AC1D0F8"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Bucket2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:23:23)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals..."
+      ]
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/BedrockStack/SiteBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SiteBucketAutoDeleteObjectsCustomResource9585E968"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/BedrockProxy/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BedrockProxyServiceRoleA5208F60"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new NodejsFunction in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:53:21)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/HttpApi/DefaultStage/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HttpApiDefaultStage3EEB07D6"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new HttpApi2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:75:21)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/HttpApi/POST--converse/LambdaIntegration-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HttpApiPOSTconverseLambdaIntegrationPermission6A37ADE9"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...C:\\Users\\gouth\\Code\\red\\infra\\node_modules\\aws-cdk-lib\\aws-apigatewayv2\\lib\\http\\api.js:1:96 in aws-cdk-lib...",
+        "Array.map (:)",
+        "...WrappedClass.<anonymous> in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:88:13)"
+      ]
+    }
+  ],
+  "/BedrockStack/HttpApi/POST--converse/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HttpApiPOSTconverseA553106F"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...C:\\Users\\gouth\\Code\\red\\infra\\node_modules\\aws-cdk-lib\\aws-apigatewayv2\\lib\\http\\api.js:1:96 in aws-cdk-lib...",
+        "Array.map (:)",
+        "...WrappedClass.<anonymous> in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:88:13)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/DeploySite/AwsCliLayer/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DeploySiteAwsCliLayer88B0EBE2"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new BucketDeployment2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:95:5)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/DeploySite/CustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DeploySiteCustomResourceE47C9748"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new BucketDeployment2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:95:5)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ],
+  "/BedrockStack/Distribution/Origin1/S3OriginAccessControl/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DistributionOrigin1S3OriginAccessControlEB606076"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...new Distribution2 in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:30:25)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals..."
+      ]
+    }
+  ],
+  "/BedrockStack/BedrockProxy/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BedrockProxyServiceRoleDefaultPolicyEF7D9049"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...NodejsFunction.addToRolePolicy in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:65:19)",
+        "<anonymous> (C:\\Users\\gouth\\Code\\red\\infra\\bin\\app.ts:6:1)",
+        "...node internals, ts-node..."
+      ]
+    }
+  ],
+  "/BedrockStack/HttpApi/POST--converse/LambdaIntegration/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HttpApiPOSTconverseLambdaIntegrationBF69490E"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...C:\\Users\\gouth\\Code\\red\\infra\\node_modules\\aws-cdk-lib\\aws-apigatewayv2\\lib\\http\\api.js:1:96 in aws-cdk-lib...",
+        "Array.map (:)",
+        "...WrappedClass.<anonymous> in aws-cdk-lib...",
+        "new BedrockStack (C:\\Users\\gouth\\Code\\red\\infra\\lib\\bedrock-stack.ts:88:13)"
+      ]
+    }
+  ],
+  "/BedrockStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+    },
+    {
+      "type": "aws:cdk:creationStack",
+      "data": [
+        "...aws-cdk-lib...",
+        "(no user code in 10 frames, use --stack-trace-limit to capture more)"
+      ]
+    }
+  ]
+}

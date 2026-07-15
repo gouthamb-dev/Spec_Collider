@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Breaking Change Sentinel",
+  "description": "When a source file is saved, analyzes the diff to detect changes that could break downstream code (public function signature changes, renamed/removed/required props, API route changes, exported symbol changes, changed return shapes, behavior changes) and produces a concise markdown report with change detected, possible impact, suggested follow-up, and risk level.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend-lambda/src/**/*.ts",
+      "backend-lambda/tests/**/*.ts",
+      "frontend/src/**/*.ts",
+      "frontend/src/**/*.svelte",
+      "infrastructure/*.yaml",
+      "microvm-image/server.py"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A source file was just saved. Analyze the git diff for this file and detect any breaking changes. Specifically look for:\n\n1. **Public function signature changes** - parameters added/removed/reordered, return type changes\n2. **Renamed, removed, or newly required props** - component prop changes that break callers\n3. **API route changes** - path changes, method changes, request/response shape changes\n4. **Exported symbol changes** - renamed exports, removed exports, changed export types\n5. **Changed return shapes** - objects with different keys, arrays vs singles, nullable changes\n6. **Behavior changes** - logic changes that may affect tests, docs, or sample usage\n\n**Instructions:**\n- Read the saved file and use `git diff` to see what changed.\n- Identify any downstream impact by checking for usages of changed symbols across the codebase.\n- Be specific — mention filenames and symbols when possible.\n- If the change affects tests, explicitly say which test areas should be reviewed.\n- If the change affects docs, explicitly say which docs should be updated.\n\n**Output a concise markdown report with these sections:**\n\n## 🔍 Change Detected\n[Describe exactly what changed — symbol names, signatures, props, routes]\n\n## 💥 Possible Impact\n[Who/what could break — list specific callers, components, tests, or docs affected]\n\n## 📋 Suggested Follow-up\n[Concrete action items — which files to update, which tests to run]\n\n## ⚠️ Risk Level\n[**Safe** / **Low Risk** / **Medium Risk** / **High Risk** — with brief justification]\n\nIf no breaking impact is found, simply state: \"✅ **Change appears safe.** No breaking impact detected on downstream code, tests, or documentation.\""
+  }
+}

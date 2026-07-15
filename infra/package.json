@@ -1,0 +1,23 @@
+{
+  "name": "red-infra",
+  "version": "1.0.0",
+  "description": "CDK infrastructure for Bedrock deployment",
+  "scripts": {
+    "build": "tsc",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy",
+    "diff": "cdk diff"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.150.0",
+    "constructs": "^10.3.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0",
+    "esbuild": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.140",
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.2"
+  }
+}

@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  /* Primary */
+  --color-primary: #7C580D;
+  --color-primary-on: #FFFFFF;
+  --color-primary-container: #FFDEAB;
+  --color-primary-on-container: #5F4100;
+
+  /* Secondary */
+  --color-secondary: #6D5C3F;
+  --color-secondary-on: #FFFFFF;
+  --color-secondary-container: #F8DFBB;
+  --color-secondary-on-container: #54442A;
+
+  /* Tertiary */
+  --color-tertiary: #4E6543;
+  --color-tertiary-on: #FFFFFF;
+  --color-tertiary-container: #D0EBC0;
+  --color-tertiary-on-container: #374D2D;
+
+  /* Error */
+  --color-error: #BA1A1A;
+  --color-error-on: #FFFFFF;
+  --color-error-container: #FFDAD6;
+  --color-error-on-container: #93000A;
+
+  /* Background */
+  --color-background: #FFF8F3;
+  --color-background-on: #201B13;
+
+  /* Surface */
+  --color-surface: #FFF8F3;
+  --color-surface-on: #201B13;
+  --color-surface-variant: #EEE0CF;
+  --color-surface-on-variant: #4E4539;
+
+  /* Outline */
+  --color-outline: #807667;
+  --color-outline-variant: #D2C5B4;
+
+  /* Surface Containers */
+  --color-surface-container: #F8ECDF;
+  --color-surface-container-high: #F2E6D9;
+  --color-surface-container-highest: #ECE1D4;
+}
+
+:root {
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color-scheme: light;
+  color: var(--color-background-on);
+  background-color: var(--color-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+}
