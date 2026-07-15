@@ -28,7 +28,7 @@ import { ArchitectStreamParser } from './agents/architect-parser.ts';
 // === App Configuration ===
 
 const AGENT_CONFIG: AgentOrchestratorConfig = {
-  endpointUrl: import.meta.env.VITE_API_ENDPOINT || 'https://h7faczcrhh.execute-api.us-east-1.amazonaws.com/converse',
+  endpointUrl: import.meta.env.VITE_API_ENDPOINT || '',
   redTeamSystemPrompt: DEFAULT_RED_TEAM_PROMPT,
   architectSystemPrompt: DEFAULT_ARCHITECT_PROMPT,
   timeoutMs: 30_000,
