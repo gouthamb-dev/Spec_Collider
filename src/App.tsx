@@ -337,18 +337,6 @@ Output ONLY the JSON object. No explanatory text before or after.`;
       );
 
       try {
-        // Check for conflict before proceeding
-        const conflict = moderationService.checkConflict(
-          mitigationId,
-          state.session.specDraft,
-        );
-        if (conflict.hasConflict) {
-          store.getState().setError(
-            `Conflict: section "${conflict.affectedSection}" was already modified by a prior decision.`
-          );
-          return;
-        }
-
         let updatedDraft;
         switch (action.type) {
           case 'accept':
