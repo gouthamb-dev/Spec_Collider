@@ -234,6 +234,9 @@ export class AgentOrchestrator implements IAgentOrchestrator {
       }
 
       if (!response.body) {
+        if (typeof response.text !== 'function') {
+          throw new Error('Response body is null');
+        }
         // Fallback: read as text and parse SSE lines
         const text = await response.text();
         const lines = text.split('\n');

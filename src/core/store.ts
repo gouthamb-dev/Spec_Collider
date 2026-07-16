@@ -339,8 +339,15 @@ function routeEvent(
       // Find an existing incomplete (streaming) entry for this source, or create one.
       const source = event.payload.source;
       const content = event.payload.content;
+
+      // Map AgentRole to valid ActivityEntry contributor
+      const contributor: ActivityEntry['contributor'] =
+        source === 'red_team_agent' ? 'red_team_agent'
+        : source === 'architect_agent' ? 'architect_agent'
+        : 'architect_agent'; // fallback for 'spec_generator'
+
       const existingEntryIndex = session.activityFeed.findIndex(
-        (e: ActivityEntry) => e.contributor === source && !e.streamComplete
+        (e: ActivityEntry) => e.contributor === contributor && !e.streamComplete
       );
 
       let updatedFeed: ActivityEntry[];
@@ -355,8 +362,8 @@ function routeEvent(
       } else {
         // Create a new streaming entry
         const entry = createActivityEntry(
-          source === 'red_team_agent' ? 'risk_identified' : 'mitigation_proposed',
-          source,
+          contributor === 'red_team_agent' ? 'risk_identified' : 'mitigation_proposed',
+          contributor,
           content,
           {}
         );

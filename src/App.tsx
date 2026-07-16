@@ -245,7 +245,7 @@ Output ONLY the JSON object. No explanatory text before or after.`;
         for (const risk of risks) {
           store.getState().dispatchEvent({
             type: 'risk_identified',
-            payload: { risk },
+            payload: { risk, agentRole: 'red_team' },
           });
         }
       } catch (err) {
@@ -301,7 +301,7 @@ Output ONLY the JSON object. No explanatory text before or after.`;
         for (const mitigation of mitigations) {
           store.getState().dispatchEvent({
             type: 'mitigation_proposed',
-            payload: { mitigation },
+            payload: { mitigation, agentRole: 'architect' },
           });
         }
       } catch (err) {
